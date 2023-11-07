@@ -25,12 +25,29 @@ const App = () => {
     setVotes(newArray);
   }
 
+  function mostVoted() {
+    let mostVotedIndex = 0;
+    for (let i = 0; i < votes.length; i++) {
+      if (votes[mostVotedIndex] < votes[i]) mostVotedIndex = i;
+    }
+
+    return (
+      <>
+        <p>{anecdotes[mostVotedIndex]}</p>
+        <p>has {votes[mostVotedIndex]} votes</p>
+      </>
+    );
+  }
+
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       <p>{anecdotes[selected]}</p>
       <p>has {votes[selected]} votes</p>
       <button onClick={handleVote}>vote</button>
       <button onClick={handleNext}>next anecdote</button>
+      <h1>Anecdote with most votes</h1>
+      {mostVoted()}
     </div>
   );
 };
