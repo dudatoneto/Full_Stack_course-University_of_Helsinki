@@ -1,12 +1,19 @@
 import { useState, useEffect } from "react";
-import { Filter, AddPerson, Persons } from "./components/Phonebook";
+import {
+  Filter,
+  AddPerson,
+  Persons,
+  Notification,
+} from "./components/Phonebook";
 import phonebookService from "./services/phonebook";
+import "./index.css";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [personFilter, setPersonFilter] = useState([...persons]);
+  const [message, setMessage] = useState(null);
 
   const getPersons = () => {
     phonebookService
@@ -50,8 +57,19 @@ const App = () => {
           person.name.toLocaleLowerCase() == newName.toLocaleLowerCase()
       );
       if (foundPerson) {
-        if (window.confirm(`${foundPerson.name} is aleady added to phonebook, replace the old number with a new one?`)) {
-          phonebookService.updateData(foundPerson.id, newNumber);
+        if (
+          window.confirm(
+            `${foundPerson.name} is aleady added to phonebook, replace the old number with a new one?`
+          )
+        ) {
+          phonebookService.updateData(foundPerson.id, newNumber).then(() => {
+            setMessage(
+              `contact ${newName} was updated successfully`
+            );
+            setTimeout(() => {
+              setMessage(null);
+            }, 7000);
+          });
           getPersons();
         }
       } else if (persons.find((person) => person.number == newNumber))
@@ -64,6 +82,14 @@ const App = () => {
 
         phonebookService
           .addData(newPerson)
+          .then(() => {
+            setMessage(
+              `contact ${newName} was added to the phonebook successfully`
+            );
+            setTimeout(() => {
+              setMessage(null);
+            }, 7000);
+          })
           .catch((error) => console.log(error));
 
         getPersons();
@@ -88,6 +114,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} />
       <Filter handlePersonFilter={handlePersonFilter} />
       <h3>add a new</h3>
       <form onSubmit={addPerson}>
