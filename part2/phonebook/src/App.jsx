@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Filter, AddPerson, Persons } from "./components/Phonebook";
 
+const BASE_URL = "http://localhost:3000/persons";
+
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
@@ -9,7 +11,7 @@ const App = () => {
   const [personFilter, setPersonFilter] = useState([...persons]);
 
   const getData = () => {
-    axios.get("http://localhost:3000/persons").then((response) => {
+    axios.get(BASE_URL).then((response) => {
       setPersons(response.data);
       setPersonFilter(response.data);
     });
@@ -56,6 +58,9 @@ const App = () => {
         number: newNumber,
       };
 
+      axios.post(BASE_URL, personObject).catch((error) => {
+        console.log(error);
+      });
       setPersons(persons.concat(personObject));
       setPersonFilter(persons.concat(personObject));
       setNewName("");
