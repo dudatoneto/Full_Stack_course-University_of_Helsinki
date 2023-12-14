@@ -44,27 +44,32 @@ const App = () => {
     event.preventDefault();
 
     if (!newName || !newNumber) alert(`name or number is missing`);
-    else if (
-      persons.find(
+    else {
+      const foundPerson = persons.find(
         (person) =>
           person.name.toLocaleLowerCase() == newName.toLocaleLowerCase()
-      )
-    )
-      alert(`${newName} has been already added to the phonebook`);
-    else if (persons.find((person) => person.number == newNumber))
-      alert(`${newNumber} has been already added to the phonebook`);
-    else {
-      const newPerson = {
-        name: newName,
-        number: newNumber,
-      };
+      );
+      if (foundPerson) {
+        if (window.confirm(`${foundPerson.name} is aleady added to phonebook, replace the old number with a new one?`)) {
+          phonebookService.updateData(foundPerson.id, newNumber);
+          getPersons();
+        }
+      } else if (persons.find((person) => person.number == newNumber))
+        alert(`${newNumber} has been already added to the phonebook`);
+      else {
+        const newPerson = {
+          name: newName,
+          number: newNumber,
+        };
 
-      phonebookService.addData(newPerson).catch((error) => console.log(error));
+        phonebookService
+          .addData(newPerson)
+          .catch((error) => console.log(error));
 
-      setPersons(persons.concat(newPerson));
-      setPersonFilter(persons.concat(newPerson));
-      setNewName("");
-      setNewNumber("");
+        getPersons();
+        setNewName("");
+        setNewNumber("");
+      }
     }
   }
 
@@ -76,8 +81,7 @@ const App = () => {
         .deleteData(deletePerson.id)
         .catch((error) => console.log(error));
 
-      setPersons(persons.filter((person) => person.id != deletePerson.id));
-      setPersonFilter(persons.filter((person) => person.id != deletePerson.id));
+      getPersons();
     }
   }
 
