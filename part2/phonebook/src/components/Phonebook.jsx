@@ -1,3 +1,5 @@
+import phonebookService from "../services/phonebook";
+
 const Person = ({ name, number }) => {
   return (
     <>
@@ -8,11 +10,25 @@ const Person = ({ name, number }) => {
   );
 };
 
-const Persons = ({ persons }) => {
+const Persons = ({ persons, handleDeletePerson }) => {
   return (
     <div>
       {persons.map((person) => (
-        <Person key={person.name} name={person.name} number={person.number} />
+        <div
+          key={person.name}
+          style={{ display: "flex", height: "1.7rem", alignItems: "center" }}
+        >
+          <Person
+            key={`person-${person.name}`}
+            name={person.name}
+            number={person.number}
+          />
+          <DeletePerson
+            key={`delete-${person.name}`}
+            name={person.name}
+            handleDeletePerson={handleDeletePerson}
+          />
+        </div>
       ))}
     </div>
   );
@@ -48,4 +64,18 @@ const AddPerson = ({
   );
 };
 
-export {Persons, Filter, AddPerson};
+const DeletePerson = ({ name, handleDeletePerson }) => {
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => handleDeletePerson(name)}
+        style={{ marginLeft: "13px" }}
+      >
+        delete
+      </button>
+    </>
+  );
+};
+
+export { Persons, Filter, AddPerson };

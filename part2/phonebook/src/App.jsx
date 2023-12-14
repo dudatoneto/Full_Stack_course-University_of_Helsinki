@@ -68,6 +68,19 @@ const App = () => {
     }
   }
 
+  function handleDeletePerson(name) {
+    if (window.confirm(`Delete ${name}?`)) {
+      const deletePerson = persons.find((person) => person.name == name);
+
+      phonebookService
+        .deleteData(deletePerson.id)
+        .catch((error) => console.log(error));
+
+      setPersons(persons.filter((person) => person.id != deletePerson.id));
+      setPersonFilter(persons.filter((person) => person.id != deletePerson.id));
+    }
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -82,7 +95,7 @@ const App = () => {
         />
       </form>
       <h2>Numbers</h2>
-      <Persons persons={personFilter} />
+      <Persons persons={personFilter} handleDeletePerson={handleDeletePerson} />
     </div>
   );
 };
