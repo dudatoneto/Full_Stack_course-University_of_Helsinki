@@ -79,10 +79,12 @@ const DeletePerson = ({ name, handleDeletePerson }) => {
 };
 
 const Notification = ({ message }) => {
-  if (message === null) {
+  if (message.message === null) {
     return null;
+  } else if (message.error) {
+    return <div className="error-message">{message.message}</div>;
   }
-  return <div className="message">{message}</div>;
+  return <div className="message">{message.message}</div>;
 };
 
 export { Persons, Filter, AddPerson, Notification };

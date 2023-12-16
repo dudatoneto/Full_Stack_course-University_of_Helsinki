@@ -13,7 +13,7 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [personFilter, setPersonFilter] = useState([...persons]);
-  const [message, setMessage] = useState(null);
+  const [message, setMessage] = useState({ message: null, error: false });
 
   const getPersons = () => {
     phonebookService
@@ -62,14 +62,26 @@ const App = () => {
             `${foundPerson.name} is aleady added to phonebook, replace the old number with a new one?`
           )
         ) {
-          phonebookService.updateData(foundPerson.id, newNumber).then(() => {
-            setMessage(
-              `contact ${newName} was updated successfully`
-            );
-            setTimeout(() => {
-              setMessage(null);
-            }, 7000);
-          });
+          phonebookService
+            .updateData(foundPerson.id, newNumber)
+            .then(() => {
+              setMessage({
+                message: `contact ${newName} was updated successfully`,
+                error: false,
+              });
+              setTimeout(() => {
+                setMessage({ message: null, error: false });
+              }, 7000);
+            })
+            .catch((error) => {
+              setMessage({
+                message: `information of ${newName} has already been removed from server`,
+                error: true,
+              });
+              setTimeout(() => {
+                setMessage({ message: null, error: false });
+              }, 7000);
+            });
           getPersons();
         }
       } else if (persons.find((person) => person.number == newNumber))
@@ -83,11 +95,12 @@ const App = () => {
         phonebookService
           .addData(newPerson)
           .then(() => {
-            setMessage(
-              `contact ${newName} was added to the phonebook successfully`
-            );
+            setMessage({
+              message: `contact ${newName} was added to the phonebook successfully`,
+              error: false,
+            });
             setTimeout(() => {
-              setMessage(null);
+              setMessage({ message: null, error: false });
             }, 7000);
           })
           .catch((error) => console.log(error));
@@ -105,6 +118,15 @@ const App = () => {
 
       phonebookService
         .deleteData(deletePerson.id)
+        .then(() => {
+          setMessage({
+            message: `contact ${newName} was deleted from the phonebook successfully`,
+            error: false,
+          });
+          setTimeout(() => {
+            setMessage({ message: null, error: false });
+          }, 7000);
+        })
         .catch((error) => console.log(error));
 
       getPersons();
