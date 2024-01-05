@@ -1,5 +1,3 @@
-import phonebookService from "../services/phonebook";
-
 const Person = ({ name, number }) => {
   return (
     <>
