@@ -42,13 +42,22 @@ function App() {
     }
   };
 
+  const handleShowButton = (country) => {
+    countriesService
+        .getCountry(country)
+        .then((countryData) => {
+          setCountrySelected(countryData);
+        })
+        .catch((error) => console.log(error));
+  }
+
   useEffect(getCountries, []);
   useEffect(handleCountrySelection, [countriesFilter]);
 
   return (
     <div>
       <Filter handleCountryFilter={handleCountryFilter} />
-      <ShowCountries countries={countriesFilter} />
+      <ShowCountries countries={countriesFilter} handleShowButton={handleShowButton} />
       <ShowCountry countryData={countrySelected} />
     </div>
   );

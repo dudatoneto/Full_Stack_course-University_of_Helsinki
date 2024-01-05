@@ -1,12 +1,12 @@
 const Filter = ({ handleCountryFilter }) => {
   return (
-    <div>
+    <div style={{ paddingBottom: "5px" }}>
       find countries <input name="filter" onChange={handleCountryFilter} />
     </div>
   );
 };
 
-const ShowCountries = ({ countries }) => {
+const ShowCountries = ({ countries, handleShowButton }) => {
   if (!countries) {
     return null;
   }
@@ -20,8 +20,19 @@ const ShowCountries = ({ countries }) => {
     return (
       <div>
         {countries.map((country) => (
-          <div key={country}>
-            <p key={country}>{country}</p>
+          <div
+            key={country}
+            style={{ display: "flex", height: "1.8rem", alignItems: "center" }}
+          >
+            <p key={`name-${country}`}>{country}</p>
+            <button
+              key={`show-${country}`}
+              type="button"
+              style={{ marginLeft: "11px" }}
+              onClick={() => handleShowButton(country)}
+            >
+              show
+            </button>
           </div>
         ))}
       </div>
@@ -42,10 +53,10 @@ const ShowCountry = ({ countryData }) => {
     return (
       <div>
         <p>{countryData.name.common}</p>
-        <p>capital: {countryData.capital.join(', ')}</p>
+        <p>capital: {countryData.capital.join(", ")}</p>
         <p>area: {countryData.area}</p>
-        <p>languages: {Object.values(countryData.languages).join(', ')}</p>
-        <img src={countryData.flags.png}/>
+        <p>languages: {Object.values(countryData.languages).join(", ")}</p>
+        <img src={countryData.flags.png} />
       </div>
     );
   }
