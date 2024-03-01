@@ -1,3 +1,5 @@
+const WEATHER_ICON_URL = "http://openweathermap.org/img/wn/"
+
 const Filter = ({ handleCountryFilter }) => {
   return (
     <div style={{ paddingBottom: "5px" }}>
@@ -52,7 +54,7 @@ const ShowCountry = ({ countryData }) => {
   if (countryData) {
     return (
       <div>
-        <p>{countryData.name.common}</p>
+        <p styles={{ fontSize: "20px" }}><b>{countryData.name.common}</b></p>
         <p>capital: {countryData.capital.join(", ")}</p>
         <p>area: {countryData.area}</p>
         <p>languages: {Object.values(countryData.languages).join(", ")}</p>
@@ -64,4 +66,19 @@ const ShowCountry = ({ countryData }) => {
   return null;
 };
 
-export { Filter, ShowCountries, ShowCountry };
+const ShowWeather = ({ weatherData }) => {
+  if (weatherData) {
+    return (
+      <div>
+        <p styles={{ fontSize: "20px" }}>Weather in {weatherData.name}</p>
+        <p>Temperature: {(weatherData.main.temp - 273.15).toFixed(2)} Celsius</p>
+        <p>Description: {weatherData.weather[0].description}</p>
+        <img src={WEATHER_ICON_URL + weatherData.weather[0].icon + "@4x.png"} />
+      </div>
+    );
+  }
+
+  return null;
+};
+
+export { Filter, ShowCountries, ShowCountry, ShowWeather };

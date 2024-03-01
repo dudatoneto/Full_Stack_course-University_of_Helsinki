@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import countriesService from "./services/countries";
-import { Filter, ShowCountries, ShowCountry } from "./components/Countries";
+import { Filter, ShowCountries, ShowCountry, ShowWeather } from "./components/Countries";
 
 function App() {
   const [countries, setCountries] = useState(null);
   const [countriesFilter, setCountriesFilter] = useState(null);
   const [countrySelected, setCountrySelected] = useState(null);
+  const [capitalWeather, setCapitalWeather] = useState(null);
 
   const getCountries = () => {
     countriesService
@@ -29,6 +30,7 @@ function App() {
 
     setCountriesFilter(filteredCountries);
     setCountrySelected(null);
+    setCapitalWeather(null);
   }
 
   const handleCountrySelection = () => {
@@ -37,6 +39,7 @@ function App() {
         .getCountry(countriesFilter[0])
         .then((countryData) => {
           setCountrySelected(countryData);
+          handleWeather(countryData.capital[0])
         })
         .catch((error) => console.log(error));
     }
@@ -44,12 +47,22 @@ function App() {
 
   const handleShowButton = (country) => {
     countriesService
-        .getCountry(country)
-        .then((countryData) => {
-          setCountrySelected(countryData);
-        })
-        .catch((error) => console.log(error));
-  }
+      .getCountry(country)
+      .then((countryData) => {
+        setCountrySelected(countryData);
+        handleWeather(countryData.capital[0])
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const handleWeather = (capital) => {
+    countriesService
+      .getWeather(capital)
+      .then((weatherData) => {
+        setCapitalWeather(weatherData);
+      })
+      .catch((error) => console.log(error));
+  };
 
   useEffect(getCountries, []);
   useEffect(handleCountrySelection, [countriesFilter]);
@@ -57,8 +70,12 @@ function App() {
   return (
     <div>
       <Filter handleCountryFilter={handleCountryFilter} />
-      <ShowCountries countries={countriesFilter} handleShowButton={handleShowButton} />
+      <ShowCountries
+        countries={countriesFilter}
+        handleShowButton={handleShowButton}
+      />
       <ShowCountry countryData={countrySelected} />
+      <ShowWeather weatherData={capitalWeather}/>
     </div>
   );
 }
