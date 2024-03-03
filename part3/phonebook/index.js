@@ -26,10 +26,6 @@ let phonebook = [
 
 app.use(express.json());
 
-app.get("/api/persons", (request, response) => {
-  response.json(phonebook);
-});
-
 app.get("/info", (request, response) => {
   const date = new Date();
   response.send(`
@@ -38,6 +34,21 @@ app.get("/info", (request, response) => {
       <p>${date}</p>
     </div>
   `);
+});
+
+app.get("/api/persons", (request, response) => {
+  response.json(phonebook);
+});
+
+app.get("/api/persons/:id", (request, response) => {
+  const id = Number(request.params.id);
+  const person = phonebook.find((person) => person.id === id);
+  if (person) {
+    response.json(person);
+  } else {
+    console.log(`There is no person with the id ${id}`);
+    response.status(404).end();
+  }
 });
 
 const PORT = 3000;
