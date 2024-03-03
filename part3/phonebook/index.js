@@ -43,8 +43,23 @@ app.get("/api/persons", (request, response) => {
 app.get("/api/persons/:id", (request, response) => {
   const id = Number(request.params.id);
   const person = phonebook.find((person) => person.id === id);
+
   if (person) {
     response.json(person);
+  } else {
+    console.log(`There is no person with the id ${id}`);
+    response.status(404).end();
+  }
+});
+
+app.delete("/api/persons/:id", (request, response) => {
+  const id = Number(request.params.id);
+  const initialLength = phonebook.length;
+  phonebook = phonebook.filter((person) => person.id !== id);
+
+  if (phonebook.length < initialLength) {
+    console.log(`Person with the id ${id} deleted`);
+    response.status(204).end();
   } else {
     console.log(`There is no person with the id ${id}`);
     response.status(404).end();
