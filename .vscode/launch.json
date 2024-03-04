@@ -8,8 +8,8 @@
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",
-            "url": "http://localhost:5173",
-            "webRoot": "${workspaceFolder}/part2/countries"
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}/part3/phonebook"
         }
     ]
 }
