@@ -47,7 +47,7 @@ const App = () => {
     setPersonFilter(filteredNames);
   }
 
-  function addPerson(event) {
+  async function addPerson(event) {
     event.preventDefault();
 
     if (!newName || !newNumber) alert(`name or number is missing`);
@@ -62,7 +62,7 @@ const App = () => {
             `${foundPerson.name} is aleady added to phonebook, replace the old number with a new one?`
           )
         ) {
-          phonebookService
+          await phonebookService
             .updateData(foundPerson.id, newNumber)
             .then(() => {
               setMessage({
@@ -92,7 +92,7 @@ const App = () => {
           number: newNumber,
         };
 
-        phonebookService
+        await phonebookService
           .addData(newPerson)
           .then(() => {
             setMessage({
@@ -112,11 +112,11 @@ const App = () => {
     }
   }
 
-  function handleDeletePerson(name) {
+  async function handleDeletePerson(name) {
     if (window.confirm(`Delete ${name}?`)) {
       const deletePerson = persons.find((person) => person.name == name);
 
-      phonebookService
+      await phonebookService
         .deleteData(deletePerson.id)
         .then(() => {
           setMessage({
