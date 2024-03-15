@@ -5,11 +5,9 @@ const express = require("express");
 const app = express();
 const Person = require("./models/phonebook");
 
-let phonebook = [];
-
+app.use(express.static("dist"));
 app.use(express.json());
 app.use(cors());
-app.use(express.static("dist"));
 
 morgan.token("data", function (req, res) {
   return JSON.stringify(req.body);
@@ -86,12 +84,6 @@ app.post("/api/persons", (request, response, next) => {
     });
   }
 
-  if (phonebook.find((person) => person.name === body.name)) {
-    return response.status(400).json({
-      error: "Name must be unique",
-    });
-  }
-
   try {
     const person = new Person({
       name: body.name,
@@ -104,6 +96,31 @@ app.post("/api/persons", (request, response, next) => {
     response.json(person);
   } catch (err) {
     console.error(`Error creating person ${body.name}:`);
+    next(err);
+  }
+});
+
+app.put("/api/persons/:id", async (request, response, next) => {
+  try {
+    const person = {
+      name: request.body.name,
+      number: request.body.number,
+    };
+
+    const updatedPerson = await Person.findByIdAndUpdate(
+      request.params.id,
+      person,
+      { new: true }
+    );
+
+    if (updatedPerson) {
+      response.json(updatedPerson);
+    } else {
+      console.log(`There is no person with the id ${request.params.id}`);
+      response.status(404).end();
+    }
+  } catch (err) {
+    console.log(`Error fetching person with id ${request.params.id}:`);
     next(err);
   }
 });

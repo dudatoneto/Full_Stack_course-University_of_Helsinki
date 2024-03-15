@@ -21,9 +21,9 @@ function deleteData(personId) {
   });
 }
 
-function updateData(id, newNumber) {
+function updateData(id, person) {
   return axios
-    .patch(`${BASE_URL}/${id}`, { number: newNumber })
+    .put(`${BASE_URL}/${id}`, person)
     .then((response) => {
       console.log("updated the data successfully");
     });

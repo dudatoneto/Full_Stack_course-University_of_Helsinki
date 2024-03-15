@@ -62,8 +62,9 @@ const App = () => {
             `${foundPerson.name} is aleady added to phonebook, replace the old number with a new one?`
           )
         ) {
+          const updatedPerson = { name: foundPerson.name, number: newNumber };
           await phonebookService
-            .updateData(foundPerson.id, newNumber)
+            .updateData(foundPerson.id, updatedPerson)
             .then(() => {
               setMessage({
                 message: `contact ${newName} was updated successfully`,
