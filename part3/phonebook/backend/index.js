@@ -75,7 +75,7 @@ app.delete("/api/persons/:id", async (request, response, next) => {
   }
 });
 
-app.post("/api/persons", (request, response, next) => {
+app.post("/api/persons", async (request, response, next) => {
   const body = request.body;
 
   if (!body.name || !body.number) {
@@ -90,7 +90,7 @@ app.post("/api/persons", (request, response, next) => {
       number: body.number,
     });
 
-    person.save();
+    await person.save();
 
     console.log(`Added ${person.name} to phonebook`);
     response.json(person);
@@ -110,7 +110,7 @@ app.put("/api/persons/:id", async (request, response, next) => {
     const updatedPerson = await Person.findByIdAndUpdate(
       request.params.id,
       person,
-      { new: true }
+      { new: true, runValidators: true, context: 'query' }
     );
 
     if (updatedPerson) {
@@ -136,6 +136,10 @@ const errorHandler = (error, request, response, next) => {
     console.log("*** malformatted id ***");
     console.error(error.message);
     return response.status(400).send({ error: "malformatted id" });
+  } else if (error.name === "ValidationError") {
+    console.log("*** name attribute has to be at least 3 chars long ***");
+    console.error(error.message);
+    return response.status(400).json({ error: error.message });
   }
 
   console.error(error.message);
@@ -150,3 +154,4 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+ 

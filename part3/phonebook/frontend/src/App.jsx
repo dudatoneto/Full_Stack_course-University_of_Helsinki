@@ -104,7 +104,13 @@ const App = () => {
               setMessage({ message: null, error: false });
             }, 7000);
           })
-          .catch((error) => console.log(error));
+          .catch((error) => {
+            setMessage({
+              message: `the name attribute has to be at least 3 characters long`,
+              error: true,
+            });
+            console.log(error.response.data.error);
+          });
 
         getPersons();
         setNewName("");
