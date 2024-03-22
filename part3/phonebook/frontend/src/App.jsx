@@ -70,19 +70,27 @@ const App = () => {
                 message: `contact ${newName} was updated successfully`,
                 error: false,
               });
+
               setTimeout(() => {
                 setMessage({ message: null, error: false });
               }, 7000);
+
+              setNewName("");
+              setNewNumber("");
             })
             .catch((error) => {
               setMessage({
-                message: `information of ${newName} has already been removed from server`,
+                message: `one of the attributes is not formatted accordingly`,
                 error: true,
               });
+
               setTimeout(() => {
                 setMessage({ message: null, error: false });
               }, 7000);
+
+              console.log(error.response.data.error);
             });
+            
           getPersons();
         }
       } else if (persons.find((person) => person.number == newNumber))
@@ -100,21 +108,28 @@ const App = () => {
               message: `contact ${newName} was added to the phonebook successfully`,
               error: false,
             });
+
             setTimeout(() => {
               setMessage({ message: null, error: false });
             }, 7000);
+
+            setNewName("");
+            setNewNumber("");
           })
           .catch((error) => {
             setMessage({
-              message: `the name attribute has to be at least 3 characters long`,
+              message: `one of the attributes is not formatted accordingly`,
               error: true,
             });
+
+            setTimeout(() => {
+              setMessage({ message: null, error: false });
+            }, 7000);
+
             console.log(error.response.data.error);
           });
 
         getPersons();
-        setNewName("");
-        setNewNumber("");
       }
     }
   }
