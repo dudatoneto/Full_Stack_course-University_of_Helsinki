@@ -22,8 +22,30 @@ const favoriteBlog = (blogs) => {
   } else return "no blogs in the list!";
 };
 
+const mostBlogs = (blogs) => {
+  let blogsObject = {};
+  let authorWithMostBlogs = {};
+  authorWithMostBlogs.blogs = 0;
+
+  blogs.forEach((blog) => {
+    if (blogsObject.hasOwnProperty(blog.author)) blogsObject[blog.author]++;
+    else blogsObject[blog.author] = 1;
+  });
+
+  for (let author in blogsObject) {
+    if (blogsObject[author] > authorWithMostBlogs.blogs) {
+      authorWithMostBlogs.author = author;
+      authorWithMostBlogs.blogs = blogsObject[author];
+    }
+  }
+
+  if (authorWithMostBlogs.author) return authorWithMostBlogs;
+  else return "no blogs in the list!";
+};
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
+  mostBlogs,
 };
