@@ -42,6 +42,14 @@ test("there are two blogs", async () => {
   assert.strictEqual(response.body.length, 2);
 });
 
+test("blog posts have unique identifier property named id", async () => {
+  const response = await api.get("/api/blogs");
+  response.body.forEach((blog) => {
+    expect(blog.id).toBeDefined(); 
+    expect(blog._id).toBeUndefined(); 
+  });
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
