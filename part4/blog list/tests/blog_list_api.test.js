@@ -95,6 +95,34 @@ test("making a post request that does not have the likes property creates a blog
   assert.strictEqual(blog.likes, 0);
 });
 
+test("making a post request that does not have the title property returns a 400 response", async () => {
+  const newBlog = {
+    author: "test",
+    url: "https://www.test.com",
+    likes: "3",
+  };
+
+  await api
+    .post("/api/blogs")
+    .send(newBlog)
+    .expect(400)
+    .expect("Content-Type", /application\/json/);
+});
+
+test("making a post request that does not have the url property returns a 400 response", async () => {
+  const newBlog = {
+    author: "test",
+    title: "test title",
+    likes: "3",
+  };
+
+  await api
+    .post("/api/blogs")
+    .send(newBlog)
+    .expect(400)
+    .expect("Content-Type", /application\/json/);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });

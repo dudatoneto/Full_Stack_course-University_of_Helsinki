@@ -7,9 +7,15 @@ blogsRouter.get("/", async (request, response) => {
 });
 
 blogsRouter.post("/", async (request, response) => {
+  if (!request.body.title || !request.body.url) {
+    return response.status(400).json({
+      error: "Content missing",
+    });
+  }
+
   const blogData = {
     ...request.body,
-    likes: request.body.likes || 0
+    likes: request.body.likes || 0,
   };
   const blog = new Blog(blogData);
 
