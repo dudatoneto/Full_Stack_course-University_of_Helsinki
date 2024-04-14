@@ -45,9 +45,32 @@ test("there are two blogs", async () => {
 test("blog posts have unique identifier property named id", async () => {
   const response = await api.get("/api/blogs");
   response.body.forEach((blog) => {
-    expect(blog.id).toBeDefined(); 
-    expect(blog._id).toBeUndefined(); 
+    expect(blog.id).toBeDefined();
+    expect(blog._id).toBeUndefined();
   });
+});
+
+test("making a post request successfully creates a blog post ", async () => {
+  const newBlog = {
+    author: "test",
+    title: "test title",
+    url: "https://www.test.com",
+    likes: "3",
+  };
+
+  await api
+    .post("/api/blogs")
+    .send(newBlog)
+    .expect(201)
+    .expect("Content-Type", /application\/json/);
+
+  const response = await api.get("/api/blogs");
+
+  const contents = response.body.map((r) => r.title);
+
+  assert.strictEqual(response.body.length, initialBlogs.length + 1);
+
+  assert(contents.includes("test title"));
 });
 
 after(async () => {
