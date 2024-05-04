@@ -1,5 +1,4 @@
 const blogsRouter = require("express").Router();
-const { request, response } = require("../app");
 const Blog = require("../models/blog");
 
 blogsRouter.get("/", async (request, response) => {
@@ -22,6 +21,24 @@ blogsRouter.post("/", async (request, response) => {
 
   await blog.save();
   response.status(201).json(blog);
+});
+
+blogsRouter.put("/:id", async (request, response) => {
+  const result = await Blog.findByIdAndUpdate(
+    request.params.id,
+    { $inc: { likes: 1 } },
+    { new: true, runValidators: true, context: "query" }
+  );
+
+  if (result) {
+    console.log(
+      `Updated the likes of the blog with the id ${request.params.id}`
+    );
+    response.status(200).json(result);
+  } else {
+    console.log(`There is no blog with the id ${request.params.id}`);
+    response.status(404).end();
+  }
 });
 
 blogsRouter.delete("/:id", async (request, response) => {

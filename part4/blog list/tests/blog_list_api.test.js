@@ -4,7 +4,6 @@ const supertest = require("supertest");
 const mongoose = require("mongoose");
 const app = require("../app");
 const Blog = require("../models/blog");
-const { insertMany } = require("../models/blog");
 
 const api = supertest(app);
 
@@ -28,7 +27,7 @@ beforeEach(async () => {
   await Blog.insertMany(initialBlogs);
 });
 
-describe("get requests", () => {
+describe("GET requests", () => {
   test("blogs are returned as json", async () => {
     await api
       .get("/api/blogs")
@@ -50,7 +49,7 @@ describe("get requests", () => {
   });
 });
 
-describe("post requests", () => {
+describe("POST requests", () => {
   test("making a post request successfully creates a blog post", async () => {
     const newBlog = {
       author: "test",
@@ -125,8 +124,8 @@ describe("post requests", () => {
   });
 });
 
-describe("delete requests", () => {
-  test("making a dele request successfully deletes a blog with the specified id", async () => {
+describe("DELETE requests", () => {
+  test("making a delete request successfully deletes a blog with the specified id", async () => {
     const newBlog = new Blog({
       author: "test",
       title: "test title",
@@ -150,7 +149,7 @@ describe("delete requests", () => {
     assert.strictEqual(blogs.length, 0);
   });
 
-  test("making a delete request with an id that does not match with any blogs", async () => {
+  test("making a delete request with an id that does not match with any blogs returns a 404 response", async () => {
     const newBlog = new Blog({
       author: "test",
       title: "test title",
@@ -158,9 +157,9 @@ describe("delete requests", () => {
       likes: "3",
     });
 
-    newBlog.save();
+    await newBlog.save();
     let response = await api.get("/api/blogs");
-    const blogs = await response.body.filter((blog) => blog.title == "test title");
+    const blogs = response.body.filter((blog) => blog.title == "test title");
 
     await api.delete(`/api/blogs/${blogs[0].id}`).expect(204);
 
@@ -168,6 +167,46 @@ describe("delete requests", () => {
 
     response = await api.get("/api/blogs");
     assert.strictEqual(response.body.length, initialBlogs.length);
+  });
+});
+
+describe("PUT requests", () => {
+  test("making a put request increases by 1 the likes of a blog with the specified id", async () => {
+    let response = await api.get("/api/blogs");
+
+    const blogsNotUpdated = response.body.filter(
+      (blog) => blog.title == "The Eras Tour"
+    );
+
+    await api.put(`/api/blogs/${blogsNotUpdated[0].id}`).expect(200);
+
+    response = await api.get("/api/blogs");
+
+    const blogsUpdated = response.body.filter(
+      (blog) => blog.title == "The Eras Tour"
+    );
+
+    assert.deepStrictEqual(
+      { ...blogsNotUpdated[0], likes: blogsNotUpdated[0].likes + 1 },
+      blogsUpdated[0]
+    );
+  });
+
+  test("making a put request with an id that does not match with any blogs returns a 404 response", async () => {
+    const newBlog = new Blog({
+      author: "test",
+      title: "test title",
+      url: "https://www.test.com",
+      likes: "3",
+    });
+
+    await newBlog.save();
+    let response = await api.get("/api/blogs");
+    const blogs = response.body.filter((blog) => blog.title == "The Eras Tour");
+
+    await api.delete(`/api/blogs/${blogs[0].id}`);
+
+    await api.put(`/api/blogs/${blogs[0].id}`).expect(404);
   });
 });
 
