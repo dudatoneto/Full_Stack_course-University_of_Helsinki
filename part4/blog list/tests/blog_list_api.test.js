@@ -65,10 +65,10 @@ describe("POST requests", () => {
       .expect("Content-Type", /application\/json/);
 
     const response = await Blog.find({});
-    const responsePostedBlog = await Blog.find({ title: "test title" });
+    const responsePostedBlog = await Blog.findOne({ title: "test title" });
 
     assert.strictEqual(response.length, initialBlogs.length + 1);
-    assert.strictEqual(responsePostedBlog.length, 1);
+    assert.notStrictEqual(responsePostedBlog.length, null);
   });
 
   test("making a post request that does not have the likes property creates a blog post with 0 likes", async () => {
@@ -85,10 +85,10 @@ describe("POST requests", () => {
       .expect("Content-Type", /application\/json/);
 
     const responseBlogs = await Blog.find({});
-    const responsePostedBlog = await Blog.find({ title: "test title" });
+    const responsePostedBlog = await Blog.findOne({ title: "test title" });
 
     assert.strictEqual(responseBlogs.length, initialBlogs.length + 1);
-    assert.strictEqual(responsePostedBlog[0].likes, 0);
+    assert.strictEqual(responsePostedBlog.likes, 0);
   });
 
   test("making a post request that does not have the title property returns a 400 response", async () => {
@@ -130,15 +130,15 @@ describe("DELETE requests", () => {
     });
 
     await newBlog.save();
-    const responseNotUpdated = await Blog.find({ title: "test title" });
+    const responseNotUpdated = await Blog.findOne({ title: "test title" });
 
-    await api.delete(`/api/blogs/${responseNotUpdated[0].id}`).expect(204);
+    await api.delete(`/api/blogs/${responseNotUpdated.id}`).expect(204);
 
     const responseBlogs = await Blog.find({});
-    const responseDeletedBlog = await Blog.find({ title: "test title" });
+    const responseDeletedBlog = await Blog.findOne({ title: "test title" });
 
     assert.strictEqual(responseBlogs.length, initialBlogs.length);
-    assert.strictEqual(responseDeletedBlog.length, 0);
+    assert.strictEqual(responseDeletedBlog, null);
   });
 
   test("making a delete request with an id that does not match with any blogs returns a 404 response", async () => {
@@ -150,11 +150,11 @@ describe("DELETE requests", () => {
     });
 
     await newBlog.save();
-    let response = await Blog.find({ title: "test title" });
+    let response = await Blog.findOne({ title: "test title" });
 
-    await api.delete(`/api/blogs/${response[0].id}`).expect(204);
+    await api.delete(`/api/blogs/${response.id}`).expect(204);
 
-    await api.delete(`/api/blogs/${response[0].id}`).expect(404);
+    await api.delete(`/api/blogs/${response.id}`).expect(404);
 
     response = await Blog.find({});
 
@@ -164,15 +164,15 @@ describe("DELETE requests", () => {
 
 describe("PUT requests", () => {
   test("making a put request increases by 1 the likes of a blog with the specified id", async () => {
-    const responseNotUpdated = await Blog.find({ title: "The Eras Tour" });
+    const responseNotUpdated = await Blog.findOne({ title: "The Eras Tour" });
 
-    await api.put(`/api/blogs/${responseNotUpdated[0].id}`).expect(200);
+    await api.put(`/api/blogs/${responseNotUpdated.id}`).expect(200);
 
-    const responseUpdated = await Blog.find({ title: "The Eras Tour" });
+    const responseUpdated = await Blog.findOne({ title: "The Eras Tour" });
 
     assert.deepStrictEqual(
-      responseNotUpdated[0].likes + 1,
-      responseUpdated[0].likes
+      responseNotUpdated.likes + 1,
+      responseUpdated.likes
     );
   });
 
@@ -185,10 +185,10 @@ describe("PUT requests", () => {
     });
 
     await newBlog.save();
-    const response = await Blog.find({ title: "test title" });
-    await Blog.findByIdAndDelete(response[0].id);
+    const response = await Blog.findOne({ title: "test title" });
+    await Blog.findByIdAndDelete(response.id);
 
-    await api.put(`/api/blogs/${response[0].id}`).expect(404);
+    await api.put(`/api/blogs/${response.id}`).expect(404);
   });
 });
 
