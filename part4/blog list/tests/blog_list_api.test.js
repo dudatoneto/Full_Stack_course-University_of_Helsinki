@@ -160,7 +160,7 @@ describe("delete requests", () => {
 
     newBlog.save();
     let response = await api.get("/api/blogs");
-    const blogs = response.body.filter((blog) => blog.title == "test title");
+    const blogs = await response.body.filter((blog) => blog.title == "test title");
 
     await api.delete(`/api/blogs/${blogs[0].id}`).expect(204);
 
