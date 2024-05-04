@@ -1,4 +1,4 @@
-const { test, after, beforeEach, expect, describe } = require("node:test");
+const { test, after, beforeEach, describe } = require("node:test");
 const assert = require("node:assert");
 const supertest = require("supertest");
 const mongoose = require("mongoose");
