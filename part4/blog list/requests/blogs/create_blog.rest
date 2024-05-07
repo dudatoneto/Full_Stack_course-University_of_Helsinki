@@ -5,5 +5,5 @@ Content-Type: application/json
     "author": "Taylor Swift",
     "title": "official website",
     "url": "https://www.taylorswift.com",
-    "likes": "13"
+    "likes": 13
 }
