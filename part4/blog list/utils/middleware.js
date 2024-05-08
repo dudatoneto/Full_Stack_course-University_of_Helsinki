@@ -22,16 +22,28 @@ const errorHandler = (error, request, response, next) => {
     console.log("*** malformatted value ***");
     console.log(`property: ${error.path}`);
     console.error(error.message);
+
     return response
       .status(400)
-      .send({ error: "malformatted id", property: error.path });
+      .send({ error: "malformatted value", property: error.path });
   } else if (error.name === "ValidationError") {
+    console.log("*** validation failed ***");
+
+    let errorString = "";
+
+    Object.keys(error.errors).forEach((key) => {
+      const property = error.errors[key];
+      errorString += `property ${property.path} is ${property.kind}; `;
+    });
+    console.log(errorString);
     console.error(error.message);
-    return response.status(400).json({ error: error.message });
+
+    return response.status(400).json({ error: errorString });
   } else if (error.code === 11000) {
     console.log("*** unique constraint violated ***");
     console.log(`properties: ${Object.keys(error.keyValue)}`);
     console.error(error.message);
+
     return response.status(400).send({
       error: "unique constraint violated",
       properties: Object.keys(error.keyValue),

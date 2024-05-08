@@ -8,6 +8,20 @@ usersRouter.get("/", async (request, response) => {
 });
 
 usersRouter.post("/", async (request, response) => {
+  if (!request.body.username || !request.body.password) {
+    console.log("username or password is missing");
+    return response
+      .status(400)
+      .json({ error: "username or password is missing" });
+  }
+
+  if (request.body.password.length < 3 || request.body.username.length < 3) {
+    console.log("username and password should be at least 3 characters long");
+    return response
+      .status(400)
+      .json({ error: "username and password should be at least 3 characters long" });
+  }
+
   const saltRounds = 10;
   const hashedPassword = await bcrypt.hash(request.body.password, saltRounds);
 
