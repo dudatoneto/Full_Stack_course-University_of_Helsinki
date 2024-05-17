@@ -1,26 +1,38 @@
-const { test, after, beforeEach, describe } = require("node:test");
+const { test, after, before, beforeEach, describe } = require("node:test");
 const assert = require("node:assert");
 const supertest = require("supertest");
 const mongoose = require("mongoose");
 const app = require("../app");
 const Blog = require("../models/blog");
+const User = require("../models/user");
 
 const api = supertest(app);
 
-const initialBlogs = [
-  new Blog({
-    title: "The Eras Tour",
-    author: "Taylor Swift",
-    url: "https://www.taylorswift.com/tour/",
-    likes: 5,
-  }),
-  new Blog({
-    title: "official website",
-    author: "Taylor Swift",
-    url: "https://www.taylorswift.com",
-    likes: 13,
-  }),
-];
+const initiateBlogs = async () => {
+  const defaultUser = await User.findOne({});
+  return [
+    new Blog({
+      title: "The Eras Tour",
+      author: "Taylor Swift",
+      url: "https://www.taylorswift.com/tour/",
+      likes: 5,
+      user: defaultUser ? defaultUser.id : null,
+    }),
+    new Blog({
+      title: "official website",
+      author: "Taylor Swift",
+      url: "https://www.taylorswift.com",
+      likes: 13,
+      user: defaultUser ? defaultUser.id : null,
+    }),
+  ];
+};
+
+let initialBlogs;
+
+before(async () => {
+  initialBlogs = await initiateBlogs();
+});
 
 beforeEach(async () => {
   await Blog.deleteMany({});
@@ -170,10 +182,7 @@ describe("PUT requests", () => {
 
     const responseUpdated = await Blog.findOne({ title: "The Eras Tour" });
 
-    assert.deepStrictEqual(
-      responseNotUpdated.likes + 1,
-      responseUpdated.likes
-    );
+    assert.deepStrictEqual(responseNotUpdated.likes + 1, responseUpdated.likes);
   });
 
   test("making a put request with an id that does not match with any blogs returns a 404 response", async () => {
