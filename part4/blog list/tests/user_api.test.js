@@ -11,12 +11,13 @@ const initialUsers = [
   new User({
     username: "taylorswift",
     name: "Taylor Swift",
-    password: "taylor123",
+    password: "$2b$10$icrpoiozYyJJSb5Eoq1ff.rIAbEEvw8vr8wfIDA0..B6B1l8rsplS",
   }),
   new User({
     username: "user1",
     name: "User 1",
-    password: "123456",
+    hashedPassword:
+      "$2b$10$NvgJ4devxIVWv/TwmyoGEeHK77JU8N6emOroX5dihgMnH73CX869K",
   }),
 ];
 
@@ -119,7 +120,7 @@ describe("POST requests", () => {
         )
       );
   });
-  
+
   test("making a post request that does not have at least 3 characters for the password property returns a 400 response", async () => {
     const newUser = {
       username: "user2",

@@ -30,11 +30,11 @@ const errorHandler = (error, request, response, next) => {
     console.log("*** validation failed ***");
 
     let errorString = "";
-
     Object.keys(error.errors).forEach((key) => {
       const property = error.errors[key];
       errorString += `property ${property.path} is ${property.kind}; `;
     });
+
     console.log(errorString);
     console.error(error.message);
 
