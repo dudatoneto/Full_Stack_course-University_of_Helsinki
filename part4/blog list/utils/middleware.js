@@ -39,6 +39,11 @@ const errorHandler = (error, request, response, next) => {
     console.error(error.message);
 
     return response.status(400).json({ error: errorString });
+  } else if (error.name === "JsonWebTokenError") {
+    console.log("*** malformed token ***");
+    console.error(error.message);
+
+    return response.status(400).json({ error: "malformed token" });
   } else if (error.code === 11000) {
     console.log("*** unique constraint violated ***");
     console.log(`properties: ${Object.keys(error.keyValue)}`);
