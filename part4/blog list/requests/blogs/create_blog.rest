@@ -1,5 +1,6 @@
 POST http://localhost:3000/api/blogs
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwiaWQiOiI2NjQ4YzI3NmM3ODA5ODZlNDcwNDczNzgiLCJpYXQiOjE3MTY3NTU5NzJ9.Fd5cq5CNjD2MiK8EPcMo1yrb2QJXO16si-LFcTqyx64
 
 {
     "author": "Taylor Swift",

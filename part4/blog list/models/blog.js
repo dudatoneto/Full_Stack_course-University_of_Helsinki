@@ -12,13 +12,6 @@ const blogSchema = new mongoose.Schema({
   },
 });
 
-blogSchema.pre("save", async function () {
-  if (!this.user) {
-    const defaultUser = await User.findOne({});
-    this.user = defaultUser._id;
-  }
-});
-
 blogSchema.set("toJSON", {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString();
