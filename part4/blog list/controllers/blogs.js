@@ -4,14 +4,6 @@ const config = require("../utils/config");
 const Blog = require("../models/blog");
 const User = require("../models/user");
 
-function getTokenFrom(request) {
-  const authorization = request.get("authorization");
-  if (authorization && authorization.startsWith("Bearer ")) {
-    return authorization.replace("Bearer ", "");
-  }
-  return null;
-}
-
 blogsRouter.get("/", async (request, response) => {
   result = await Blog.find({}).populate("user", {
     username: 1,
@@ -28,7 +20,7 @@ blogsRouter.post("/", async (request, response) => {
     });
   }
 
-  const decodedToken = jwt.verify(getTokenFrom(request), config.SECRET_TOKEN);
+  const decodedToken = jwt.verify(request.token, config.SECRET_TOKEN);
   if (!decodedToken.id) {
     return response.status(401).json({ error: "invalid token" });
   }

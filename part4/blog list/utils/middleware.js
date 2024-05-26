@@ -1,5 +1,13 @@
 const logger = require("./logger");
 
+function tokenExtractor(request, response, next) {
+  const authorization = request.get("authorization");
+  if (authorization && authorization.startsWith("Bearer ")) {
+    request.token = authorization.replace("Bearer ", "");
+  } else request.token = null;
+  next();
+}
+
 const requestLogger = (request, response, next) => {
   const requestBodyCopy = { ...request.body };
   if (requestBodyCopy.hasOwnProperty("password")) {
@@ -40,10 +48,10 @@ const errorHandler = (error, request, response, next) => {
 
     return response.status(400).json({ error: errorString });
   } else if (error.name === "JsonWebTokenError") {
-    console.log("*** malformed token ***");
+    console.log("*** token error ***");
     console.error(error.message);
 
-    return response.status(400).json({ error: "malformed token" });
+    return response.status(400).json({ error: error.message });
   } else if (error.code === 11000) {
     console.log("*** unique constraint violated ***");
     console.log(`properties: ${Object.keys(error.keyValue)}`);
@@ -61,6 +69,7 @@ const errorHandler = (error, request, response, next) => {
 };
 
 module.exports = {
+  tokenExtractor,
   requestLogger,
   unknownEndpoint,
   errorHandler,
