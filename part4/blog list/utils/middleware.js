@@ -64,7 +64,7 @@ const errorHandler = (error, request, response, next) => {
     console.log("*** token error ***");
     console.error(error.message);
 
-    return response.status(400).json({ error: error.message });
+    return response.status(401).json({ error: error.message });
   } else if (error.code === 11000) {
     console.log("*** unique constraint violated ***");
     console.log(`properties: ${Object.keys(error.keyValue)}`);

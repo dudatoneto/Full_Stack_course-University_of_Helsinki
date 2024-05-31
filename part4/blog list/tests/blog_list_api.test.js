@@ -16,14 +16,14 @@ const initiateBlogs = async () => {
       author: "Taylor Swift",
       url: "https://www.taylorswift.com/tour/",
       likes: 5,
-      user: defaultUser ? defaultUser.id : null,
+      user: defaultUser,
     }),
     new Blog({
       title: "official website",
       author: "Taylor Swift",
       url: "https://www.taylorswift.com",
       likes: 13,
-      user: defaultUser ? defaultUser.id : null,
+      user: defaultUser,
     }),
   ];
 };
@@ -70,8 +70,10 @@ describe("POST requests", () => {
       likes: "3",
     };
 
+    const token = ;
     await api
       .post("/api/blogs")
+      .set("Authorization", `Bearer ${token}`)
       .send(newBlog)
       .expect(201)
       .expect("Content-Type", /application\/json/);

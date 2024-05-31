@@ -1,4 +1,5 @@
 const blogsRouter = require("express").Router();
+const middleware = require("../utils/middleware");
 const Blog = require("../models/blog");
 
 blogsRouter.get("/", async (request, response) => {
@@ -10,7 +11,7 @@ blogsRouter.get("/", async (request, response) => {
   response.json(result);
 });
 
-blogsRouter.post("/", async (request, response) => {
+blogsRouter.post("/", middleware.userExtractor, async (request, response) => {
   if (!request.body.title || !request.body.url) {
     return response.status(400).json({
       error: "Content missing",
@@ -52,32 +53,36 @@ blogsRouter.put("/:id", async (request, response) => {
   }
 });
 
-blogsRouter.delete("/:id", async (request, response) => {
-  const user = request.user;
-  const result = await Blog.findById(request.params.id);
+blogsRouter.delete(
+  "/:id",
+  middleware.userExtractor,
+  async (request, response) => {
+    const user = request.user;
+    const result = await Blog.findById(request.params.id);
 
-  if (result) {
-    if (result.user.toString() === user.id) {
-      await result.deleteOne();
+    if (result) {
+      if (result.user.toString() === user.id) {
+        await result.deleteOne();
 
-      // remove the blog id from the user.blogs
-      user.blogs = user.blogs.filter(
-        (blogId) => blogId.toString() !== request.params.id
-      );
-      await user.save();
+        // remove the blog id from the user.blogs
+        user.blogs = user.blogs.filter(
+          (blogId) => blogId.toString() !== request.params.id
+        );
+        await user.save();
 
-      console.log(`Blog with the id ${request.params.id} deleted`);
-      response.status(204).end();
+        console.log(`Blog with the id ${request.params.id} deleted`);
+        response.status(204).end();
+      } else {
+        console.log(
+          `User with the id ${user.id} is not authorized to delete the blog with the id ${request.params.id}`
+        );
+        response.status(401).json({ error: "unauthorized blog deletion" });
+      }
     } else {
-      console.log(
-        `User with the id ${user.id} is not authorized to delete the blog with the id ${request.params.id}`
-      );
-      response.status(401).json({ error: "unauthorized blog deletion" });
+      console.log(`There is no blog with the id ${request.params.id}`);
+      response.status(404).end();
     }
-  } else {
-    console.log(`There is no blog with the id ${request.params.id}`);
-    response.status(404).end();
   }
-});
+);
 
 module.exports = blogsRouter;
